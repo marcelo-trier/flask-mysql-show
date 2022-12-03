@@ -1,13 +1,3 @@
-# docs e referencias:
-# https://dev.mysql.com/doc/connector-python/en/connector-python-examples.html
-# https://realpython.com/python-mysql/
-
-# abaixo instalacao da biblioteca mysql do python
-# pip3 install mysql-connector-python
-
-# abaixo comando para verificar se o servidor está acessível
-# ping 10.21.81.248
-
 import mysql.connector as meubanco
 import pandas
 
@@ -19,35 +9,23 @@ dbconfig = {
   'database': 'myflaskdb',
 }
 
-def pegainfo():
-  mysql = meubanco.connect(**dbconfig)
-  conexao = mysql.cursor()
+mysql = meubanco.connect(**dbconfig)
+conexao = mysql.cursor()
 
-  comando = '''
-    SELECT * from myflaskdbteste
-  '''
-
+def capturar_nome_tabelas():
+  comando = 'SHOW TABLES'
   conexao.execute(comando)
-  lista = []
-  for resp in conexao:
-    lista.append(resp)
+  lista_nomes = []
+  for registro in conexao:
+    lista_nomes.append(registro[0])
 
-  conexao.close()
-
-  return lista
+  return lista_nomes
 
 
-def pegainfo_pandas():
-  mysql = meubanco.connect(**dbconfig)
-  conexao = mysql.cursor()
-
-  comando = '''
-    SELECT * from tbWil
-  '''
-
+def captura_registros(nome_tab):
+  comando = f'SELECT * from {nome_tab}'
   conexao.execute(comando)
   tabela_total = conexao.fetchall()
   df = pandas.DataFrame(tabela_total, columns=conexao.column_names)
 
   return df
-
